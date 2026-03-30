@@ -11,21 +11,18 @@ export function TicketDetailPage() {
   const [visibility, setVisibility] = useState('PUBLIC')
   const [reopenReason, setReopenReason] = useState('')
   const [error, setError] = useState('')
-  const [attachments, setAttachments] = useState([])
   const [userRole, setUserRole] = useState('user')
   const [newPriority, setNewPriority] = useState('P0')
 
   const load = async () => {
-    const [t, c, e, a] = await Promise.all([
+    const [t, c, e] = await Promise.all([
       api.get(`/tickets/${id}`),
       api.get(`/comments/ticket/${id}`),
-      api.get(`/tickets/${id}/events`),
-      api.get(`/files/ticket/${id}`).catch(() => ({ data: [] }))
+      api.get(`/tickets/${id}/events`)
     ])
     setTicket(t.data)
     setComments(c.data)
     setEvents(e.data)
-    setAttachments(a.data)
   }
 
   useEffect(() => {
@@ -34,14 +31,12 @@ export function TicketDetailPage() {
       api.get(`/tickets/${id}`),
       api.get(`/comments/ticket/${id}`),
       api.get(`/tickets/${id}/events`),
-      api.get(`/files/ticket/${id}`).catch(() => ({ data: [] })),
       api.get('/auth/me').catch(() => ({ data: { role: 'user' } }))
-    ]).then(([t, c, e, a, u]) => {
+    ]).then(([t, c, e, u]) => {
       if (cancelled) return
       setTicket(t.data)
       setComments(c.data)
       setEvents(e.data)
-      setAttachments(a.data)
       setUserRole(u.data.role)
     })
     return () => {
@@ -109,20 +104,6 @@ export function TicketDetailPage() {
               <option value="P3">P3 (Low)</option>
             </select>
             <button style={{ backgroundColor: '#ef4444' }} onClick={handlePriorityOverride}>Admin Override Priority</button>
-          </div>
-        )}
-        {attachments.length > 0 && (
-          <div style={{ marginTop: '16px' }}>
-            <h4>Attachments</h4>
-            <ul style={{ margin: 0, paddingLeft: '20px' }}>
-              {attachments.map(a => (
-                <li key={a.id}>
-                  <a href={`http://127.0.0.1:8001/files/${a.id}/download`} target="_blank" rel="noreferrer" download>
-                    {a.filename}
-                  </a>
-                </li>
-              ))}
-            </ul>
           </div>
         )}
       </section>

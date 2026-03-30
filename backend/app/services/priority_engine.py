@@ -20,11 +20,11 @@ def compute_priority(impact, urgency, category, reopen_count=0):
 
     priority = base_map.get((impact, urgency), "P3")
 
-    # Category bump
+    # Category
     if category == "BUG" and priority != "P0":
         priority = upgrade(priority)
 
-    # Reopen escalation
+    # Reopen
     for _ in range(reopen_count):
         priority = upgrade(priority)
 
