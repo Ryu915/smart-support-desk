@@ -1,0 +1,41 @@
+import os
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+from urllib.parse import quote_plus
+
+
+DB_USER = os.getenv("DB_USER", "root")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "")
+DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
+DB_PORT = os.getenv("DB_PORT", "3306")
+DB_NAME = os.getenv("DB_NAME", "smart_support_desk")
+
+encoded_password = quote_plus(DB_PASSWORD) if DB_PASSWORD else ""
+USE_SQLITE = os.getenv("USE_SQLITE", "true").lower() == "true"
+
+if USE_SQLITE:
+    DATABASE_URL = "sqlite:///./smart_support_desk.db"
+    engine = create_engine(DATABASE_URL, echo=False, future=True, connect_args={"check_same_thread": False})
+else:
+    if encoded_password:
+        DATABASE_URL = (
+            f"mysql+pymysql://{DB_USER}:{encoded_password}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+        )
+    else:
+        # Some local MySQL setups use empty root passwords.
+        DATABASE_URL = f"mysql+pymysql://{DB_USER}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+    engine = create_engine(DATABASE_URL, echo=False, future=True)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
