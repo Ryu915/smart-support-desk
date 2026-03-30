@@ -14,6 +14,7 @@ export function TicketsPage() {
   const [tickets, setTickets] = useState([])
   const [filters, setFilters] = useState({ sort_by: 'latest', overdue_only: false, status: '', category: '', priority: '' })
   const [form, setForm] = useState(initialForm)
+  const [file, setFile] = useState(null)
   const [error, setError] = useState('')
 
   const loadTickets = async () => {
@@ -35,8 +36,14 @@ export function TicketsPage() {
     e.preventDefault()
     setError('')
     try {
-      await api.post('/tickets/', form)
+      const res = await api.post('/tickets/', form)
+      if (file) {
+        const fd = new FormData()
+        fd.append('file', file)
+        await api.post(`/files/upload?ticket_id=${res.data.id}`, fd)
+      }
       setForm(initialForm)
+      setFile(null)
       loadTickets()
     } catch (err) {
       let errorData = err?.response?.data?.detail
@@ -59,6 +66,7 @@ export function TicketsPage() {
           <label>Category<select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}><option>Bug</option><option>Feature</option><option>Billing</option><option>Other</option></select></label>
           <label>Impact<select value={form.impact} onChange={(e) => setForm({ ...form, impact: e.target.value })}><option>Low</option><option>Medium</option><option>High</option></select></label>
           <label>Urgency<select value={form.urgency} onChange={(e) => setForm({ ...form, urgency: e.target.value })}><option>Low</option><option>Medium</option><option>High</option></select></label>
+          <label>Attachment (Optional)<input type="file" onChange={(e) => setFile(e.target.files[0])} /></label>
           <button type="submit">Create</button>
         </form>
         {error && <p className="error">{error}</p>}
