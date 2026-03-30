@@ -23,7 +23,6 @@ else:
             f"mysql+pymysql://{DB_USER}:{encoded_password}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
         )
     else:
-        # Some local MySQL setups use empty root passwords.
         DATABASE_URL = f"mysql+pymysql://{DB_USER}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
     engine = create_engine(DATABASE_URL, echo=False, future=True)

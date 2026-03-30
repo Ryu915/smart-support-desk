@@ -92,5 +92,4 @@ def download_attachment(
     if not attachment:
         raise HTTPException(status_code=404, detail="Attachment not found")
     
-    # Optional: logic to check if user has access to this ticket
     return FileResponse(attachment.file_path, filename=attachment.filename)
