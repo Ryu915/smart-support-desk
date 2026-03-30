@@ -12,8 +12,9 @@ const initialForm = {
 
 export function TicketsPage() {
   const [tickets, setTickets] = useState([])
-  const [filters, setFilters] = useState({ sort_by: 'latest', overdue_only: false })
+  const [filters, setFilters] = useState({ sort_by: 'latest', overdue_only: false, status: '', category: '', priority: '' })
   const [form, setForm] = useState(initialForm)
+  const [file, setFile] = useState(null)
   const [error, setError] = useState('')
 
   const loadTickets = async () => {
@@ -35,8 +36,14 @@ export function TicketsPage() {
     e.preventDefault()
     setError('')
     try {
-      await api.post('/tickets/', form)
+      const res = await api.post('/tickets/', form)
+      if (file) {
+        const fd = new FormData()
+        fd.append('file', file)
+        await api.post(`/files/upload?ticket_id=${res.data.id}`, fd)
+      }
       setForm(initialForm)
+      setFile(null)
       loadTickets()
     } catch (err) {
       let errorData = err?.response?.data?.detail
@@ -59,6 +66,7 @@ export function TicketsPage() {
           <label>Category<select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}><option>Bug</option><option>Feature</option><option>Billing</option><option>Other</option></select></label>
           <label>Impact<select value={form.impact} onChange={(e) => setForm({ ...form, impact: e.target.value })}><option>Low</option><option>Medium</option><option>High</option></select></label>
           <label>Urgency<select value={form.urgency} onChange={(e) => setForm({ ...form, urgency: e.target.value })}><option>Low</option><option>Medium</option><option>High</option></select></label>
+          <label>Attachment (Optional)<input type="file" onChange={(e) => setFile(e.target.files[0])} /></label>
           <button type="submit">Create</button>
         </form>
         {error && <p className="error">{error}</p>}
@@ -66,6 +74,27 @@ export function TicketsPage() {
       <section className="card">
         <h2>Tickets</h2>
         <div className="filter-row">
+          <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })}>
+            <option value="">All Statuses</option>
+            <option value="OPEN">Open</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="RESOLVED">Resolved</option>
+            <option value="CLOSED">Closed</option>
+          </select>
+          <select value={filters.category} onChange={(e) => setFilters({ ...filters, category: e.target.value })}>
+            <option value="">All Categories</option>
+            <option value="Bug">Bug</option>
+            <option value="Feature">Feature</option>
+            <option value="Billing">Billing</option>
+            <option value="Other">Other</option>
+          </select>
+          <select value={filters.priority} onChange={(e) => setFilters({ ...filters, priority: e.target.value })}>
+            <option value="">All Priorities</option>
+            <option value="P0">P0</option>
+            <option value="P1">P1</option>
+            <option value="P2">P2</option>
+            <option value="P3">P3</option>
+          </select>
           <select value={filters.sort_by} onChange={(e) => setFilters({ ...filters, sort_by: e.target.value })}>
             <option value="latest">Latest</option>
             <option value="oldest">Oldest</option>
