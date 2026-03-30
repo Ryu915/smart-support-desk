@@ -9,8 +9,18 @@ from app.routers import auth, tickets, dashboard, comments, files
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["100/minute"])
 
+from fastapi.middleware.cors import CORSMiddleware
+
 def create_app() -> FastAPI:
     app = FastAPI(title="Smart Support Desk API")
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     app.state.limiter = limiter
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
