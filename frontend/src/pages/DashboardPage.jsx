@@ -53,7 +53,7 @@ export function DashboardPage() {
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="value" fill="#4f46e5" />
+              <Bar dataKey="value" fill="#eab308" />
             </BarChart>
           </ResponsiveContainer>
         </div>

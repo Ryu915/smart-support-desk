@@ -14,7 +14,7 @@ body {
   margin-bottom: 16px;
 }
 .app-header nav { display: flex; gap: 12px; align-items: center; }
-a { text-decoration: none; color: #4338ca; }
+a { text-decoration: none; color: #ca8a04; }
 .card {
   background: white;
   border: 1px solid #ccc;
@@ -33,7 +33,7 @@ input, textarea, select, button {
   border-radius: 8px;
   border: 1px solid #d1d5db;
 }
-button { cursor: pointer; background: #4f46e5; color: white; border: none; }
+button { cursor: pointer; background: #eab308; color: #fff; border: none; font-weight: bold; }
 .filter-row { display: flex; gap: 10px; align-items: center; margin: 8px 0; }
 .ticket-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
 .ticket-list li {
@@ -44,6 +44,6 @@ button { cursor: pointer; background: #4f46e5; color: white; border: none; }
   gap: 4px;
 }
 .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
-.metric-grid > div { background: #eef2ff; border-radius: 8px; padding: 10px; text-align: center; }
+.metric-grid > div { background: #fefce8; border: 1px solid #fef08a; border-radius: 8px; padding: 10px; text-align: center; }
 .error { color: #b91c1c; }
 .hint { color: #6b7280; font-size: 14px; }
